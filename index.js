@@ -8,23 +8,26 @@ app.set('port', (process.env.PORT || 5000))
 app.get('/', function(request, response) {
   response.send(cool());
 });
-// app.get('/', function(request, response) {
-//   response.send('Hello there.');
-// });
-
-app.get('/', function(request, response) {
-  response.send(cool());
-});
 // app.use(express.static(__dirname + '/public'));
 
-app.get('/db', function (request, response) {
+app.get('/', function(request, response) {
+  var result = ''
+  var times = process.env.TIMES || 5
+  for (i = 0; i < times; i++)
+    result += cool();
+  response.send(result);
+});
+
+app.get('/db', function(request, response) {
   pg.connect(process.env.DATABASE_URL, function(err, client, done) {
     client.query('SELECT * FROM test_table', function(err, result) {
       done();
-      if (err)
-       { console.error(err); response.send("Error " + err); }
-      else
-       { response.send(result.rows); }
+      if (err) {
+        console.error(err);
+        response.send("Error " + err);
+      } else {
+        response.send(result.rows);
+      }
     });
   });
 })
